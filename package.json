@@ -7,6 +7,14 @@
   "scripts": {
     "init": "cd functions && npm i"
   },
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.1.0",
+    "eslint-plugin-react": "^7.14.3"
+  },
   "author": "targetcreature",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "babel-plugin-styled-components": "^1.10.6"
+  }
 }

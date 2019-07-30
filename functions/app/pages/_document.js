@@ -26,6 +26,7 @@ export default class MyDocument extends Document {
                     {/* Step 5: Output the styles in the head  */}
                     {this.props.styleTags}
                 </Head>
+                <head><title>write • brite</title></head>
                 <body style={{ margin: "0px" }}>
                     <Main />
                     <NextScript />

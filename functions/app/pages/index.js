@@ -3,14 +3,48 @@ import ReactToPrint from "react-to-print"
 import styled from "styled-components"
 import { FiClipboard as Clipboard } from "react-icons/fi"
 import { FiPrinter as PrintIcon } from "react-icons/fi"
+import { FiMousePointer as MouseIcon } from "react-icons/fi"
 import useSize from "@rehooks/component-size"
 
-export default () => {
+export default () =>
+    <div>
+        <Mobile>
+            <MouseIcon size={20}/>
+            <br/>
+            <br/>
+            <br/>
+            Write-Brite is a mouse thing
+        </Mobile>
+        <App/>
+    </div>
+
+const Mobile = styled.div`
+
+    display: none;
+
+    @media only screen and (max-width: 1023px) {
+        background: #CCC;
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        /* display: flex;
+        justify-content: center;
+        align-items: center; */
+        padding-top: 25vw;
+        font-family: monospace;
+        text-align: center;
+        color: #333;
+        svg{
+            stroke-width: 1px;
+            stroke: #333;
+        }
+    }
+`
+
+const App = (props) => {
 
     const [text, setText] = useState(() => {
-        const initText = `Here we are,  sitting on a bed in the back corner of the library, staring at the ceiling while looking at books. The window isn't open yet, but it looks very much like one we could see on my computer screen. I think the night sky is a bright blue, maybe orange, in that direction. Or maybe yellow... We are only about 30 feet away by now.
-        We are going to be staring at a huge room. About six or seven stories high. The walls aren't painted, but there are curtains on the windows. So when the light of a torch hits the ceiling, there is a slight reflection. I don't know if this effect is the same on all windows or only on these windows that are on the higher ceilings. It would be nice if we could see through the curtains or the curtains, just as we can read books on the bookshelf. That'd be neat. In any case, I don't know what we are going to be reading in the library. I'm just curious about reading. I'm not sure exactly.
-        Maybe we are going to be reading  The Life and Adventures of Captain James Cook , on a large stack of books stacked in boxes. In those books is the story of the expedition to the Pacific Ocean by Captain James Cook, where we found gold.`
+        const initText = "Here we are,  sitting on a bed in the back corner of the library, staring at the ceiling while looking at books. The window isn't open yet, but it looks very much like one we could see on my computer screen. I think the night sky is a bright blue, maybe orange, in that direction. Or maybe yellow... We are only about 30 feet away by now. We are going to be staring at a huge room. About six or seven stories high. The walls aren't painted, but there are curtains on the windows. So when the light of a torch hits the ceiling, there is a slight reflection. I don't know if this effect is the same on all windows or only on these windows that are on the higher ceilings. It would be nice if we could see through the curtains or the curtains, just as we can read books on the bookshelf. That'd be neat. In any case, I don't know what we are going to be reading in the library. I'm just curious about reading. I'm not sure exactly. Maybe we are going to be reading  The Life and Adventures of Captain James Cook , on a large stack of books stacked in boxes. In those books is the story of the expedition to the Pacific Ocean by Captain James Cook, where we found gold."
         const initSplit = initText.split(" ")
         return initSplit
     })
@@ -32,15 +66,21 @@ export default () => {
     const [border, setBorder] = useState(true)
     const [center, setCenter] = useState(true)
     const [backlight, setBacklight] = useState(false)
+    const [hideMenu, setHideMenu] = useState(false)
+    const [hide, setHide] = useState(false)
 
-    console.log(containerSize)
+    const setAbout = () => {
+        const initText = "Write Brite is an open source writing tool made by Craig Hildebrand You can find the source code at github.com/targetcreature/write-brite  For any other inquiries, contact targetcreature@gmail.com      :^)"
+        const initSplit = initText.split(" ")
+        setText(initSplit)
+    }
 
     return (
         <Wrap border={border} center={center}>
 
-            <Menu border={border}>
+            <Menu border={border} onMouseEnter={() => setHide(false)} onMouseLeave={() => hideMenu ? setHide(true) : null} hide={hide}>
                 <Option onClick={pasteHandler}><Clipboard size={30} /><OptionText>PASTE</OptionText></Option>
-                <Option onClick={clearHandler}><Clear border={border}/><OptionText>CLEAR</OptionText></Option>
+                <Option onClick={clearHandler}><Clear border={border} /><OptionText>CLEAR</OptionText></Option>
                 <ReactToPrint
                     trigger={() =>
                         <Option><PrintIcon size={30} /><OptionText>PRINT</OptionText></Option>
@@ -60,6 +100,22 @@ export default () => {
 
                     <PrintOption onClick={() => setBacklight((b) => !b)}>
                         <CheckBox type="checkbox" readOnly checked={backlight} /> BACKLIGHT
+                    </PrintOption>
+
+                </PrintOptions>
+
+                <PrintOptions>
+
+                    <PrintOption onClick={() => setHideMenu((b) => !b)}>
+                        <CheckBox type="checkbox" readOnly checked={hideMenu} /> FOCUS
+                    </PrintOption>
+
+                    <PrintOption hide>
+                        <CheckBox type="checkbox" readOnly checked={center} /> CENTERED
+                    </PrintOption>
+
+                    <PrintOption style={{ cursor: "pointer" }} onClick={setAbout}>
+                        <CheckBox type="checkbox" readOnly checked={backlight} style={{ opacity: 0, cursor: "pointer" }}/> ???
                     </PrintOption>
 
                 </PrintOptions>
@@ -90,6 +146,8 @@ const Menu = styled.div`
       stroke: ${(props) => props.border ? "#333" : "#666"};
       stroke-width: 1px;
     }
+    opacity: ${(props) => props.hide ? 0 : 1};
+    transition: opacity 0.5s;
 `
 
 const Clear = styled.div`
@@ -132,6 +190,7 @@ const PrintOptions = styled.div`
 
 `
 const PrintOption = styled.div`
+    opacity: ${(props) => props.hide ? 0 : 1};
 
 `
 
@@ -149,6 +208,12 @@ const Wrap = styled.div`
     height: 100vh;
     transition: background .5s;
 
+    @media only screen and (max-width: 1023px) {
+
+        display: none;
+
+    }
+
 `
 
 const Container = styled.div`
@@ -162,13 +227,21 @@ const Container = styled.div`
     padding: 40px;
     overflow-y: auto;
     /* box-sizing: border-box; */
+    font-family: monospace;
+
+    @media only screen and (max-width: 1023px) {
+
+        width: 60vw;
+        max-height: 50vh;
+        
+    }
 
 
     @media print{
         border-color: ${(props) => props.border ? "black" : "transparent"};
         width: ${(props) => props.size.width}px;
         height: ${(props) => props.size.height}px;
-        /* margin: ${(props) => props.center ? "auto" : "initial"}; */
+        margin: ${(props) => props.center ? "auto" : "initial"};
         overflow-y: visible;
         box-sizing: border-box;
 
