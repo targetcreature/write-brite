@@ -1,0 +1,12 @@
+{
+  "name": "write-brite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "scripts": {
+    "init": "cd functions && npm i"
+  },
+  "author": "targetcreature",
+  "license": "ISC"
+}
