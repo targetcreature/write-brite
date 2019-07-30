@@ -31,15 +31,16 @@ export default () => {
 
     const [border, setBorder] = useState(true)
     const [center, setCenter] = useState(true)
+    const [backlight, setBacklight] = useState(false)
 
     console.log(containerSize)
 
     return (
         <Wrap border={border} center={center}>
 
-            <Menu>
+            <Menu border={border}>
                 <Option onClick={pasteHandler}><Clipboard size={30} /><OptionText>PASTE</OptionText></Option>
-                <Option onClick={clearHandler}><Clear /><OptionText>CLEAR</OptionText></Option>
+                <Option onClick={clearHandler}><Clear border={border}/><OptionText>CLEAR</OptionText></Option>
                 <ReactToPrint
                     trigger={() =>
                         <Option><PrintIcon size={30} /><OptionText>PRINT</OptionText></Option>
@@ -57,6 +58,10 @@ export default () => {
                         <CheckBox type="checkbox" readOnly checked={center} /> CENTERED
                     </PrintOption>
 
+                    <PrintOption onClick={() => setBacklight((b) => !b)}>
+                        <CheckBox type="checkbox" readOnly checked={backlight} /> BACKLIGHT
+                    </PrintOption>
+
                 </PrintOptions>
 
             </Menu>
@@ -64,7 +69,7 @@ export default () => {
             <Container ref={containerRef} size={containerSize} border={border} center={center}>
                 {
                     text.map((word, idx) => {
-                        return <Word key={`${word}__${idx}`} word={word} clear={clear} />
+                        return <Word key={`${word}__${idx}`} word={word} clear={clear} backlight={backlight} />
                     })
                 }
             </Container>
@@ -80,12 +85,18 @@ const Menu = styled.div`
     bottom: 20px;
     left: 20px;
     font-family: monospace;
+    color: ${(props) => props.border ? "#333" : "#666"};
+    svg{
+      stroke: ${(props) => props.border ? "#333" : "#666"};
+      stroke-width: 1px;
+    }
 `
 
 const Clear = styled.div`
         width: 15px;
         height: 25px;
-        border: 1px solid #333;
+        border: 1px solid;
+        border-color: ${(props) => props.border ? "#333" : "#666"};
         border-radius: 5px;
         transform: rotate(15deg);
 `
@@ -96,11 +107,7 @@ const Option = styled.div`
     align-items: center;
     padding: 20px;
     padding-right: 10px;
-    color: #333;
-    svg{
-      stroke: #333;
-      stroke-width: 1px;
-    }
+    
     cursor: pointer;
 `
 const OptionText = styled.div`
@@ -115,10 +122,10 @@ const PrintOptions = styled.div`
     flex-direction:column;
     padding: 20px;
     padding-left: 10px;
-    color: #333;
+    /* color: #333;
     svg{
       fill: #333;
-    }
+    } */
     div{
         cursor: default;
     }
@@ -170,13 +177,7 @@ const Container = styled.div`
 
 `
 
-/* 
-
- convert to PNG then print that I guess :(
-
-*/
-
-const Word = ({ word, clear = false }) => {
+const Word = ({ word, clear = false, backlight }) => {
 
     const [pinned, setPinned] = useState(false)
     const [hover, setHover] = useState(false)
@@ -190,6 +191,7 @@ const Word = ({ word, clear = false }) => {
             onMouseEnter={() => pinned ? setHover(true) : null}
             onMouseLeave={() => pinned ? setHover(false) : null}
             hover={hover}
+            backlight={backlight}
         >{word}</WordStyle>
     )
 }
@@ -199,9 +201,10 @@ const WordStyle = styled.div`
     margin: 0px 5px 0px 5px;
     display: inline-block;
     color: black;
-    /* color: ${(props) => props.pinned ? "black" : "white"}; */
+    opacity: ${(props) => props.pinned ? 1 : props.backlight ? 0.20 : 0};
+
     &:hover{
-        color: ${(props) => props.hover ? "#888" : "black"};
+        opacity: ${(props) => props.hover ? 0.5 : 1};
     }
     
 `
