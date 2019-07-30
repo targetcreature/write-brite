@@ -67,7 +67,7 @@ const App = (props) => {
     const [hide, setHide] = useState(false)
 
     const setAbout = () => {
-        const initText = "Write Brite is an open source writing tool made by Craig Hildebrand You can find the source code at github.com/targetcreature/write-brite  For any other inquiries, contact targetcreature@gmail.com      :^)"
+        const initText = "Write-Brite is an open source writing tool made by Craig Hildebrand  It belongs to the cucumbers        You can find the complete source code at github.com/targetcreature/write-brite      For anything else, contact targetcreature@gmail.com             :^)"
         const initSplit = initText.split(" ")
         setText(initSplit)
     }
@@ -105,7 +105,7 @@ const App = (props) => {
                     <PrintOptions>
 
                         <PrintOption onClick={() => setHideMenu((b) => !b)}>
-                            <CheckBox type="checkbox" readOnly checked={hideMenu} /> FOCUS
+                            <CheckBox type="checkbox" readOnly checked={!hideMenu} /> MENU
                         </PrintOption>
 
                         <PrintOption hide>
@@ -138,8 +138,9 @@ const Menu = styled.div`
     align-items: flex-end;
     position: fixed;
     bottom: 20px;
-    left: ${(props) => props.center ? "20px" : "initial"};
-    right: ${(props) => props.center ? "initial" : "20px"};
+    /* left: ${(props) => props.center ? "20px" : "initial"}; */
+    /* right: ${(props) => props.center ? "initial" : "20px"}; */
+    right: 20px;
     font-family: monospace;
     color: ${(props) => props.border ? "#333" : "#666"};
     svg{
@@ -204,6 +205,7 @@ const BGWrap = styled.div`
     padding-top: ${(props) => props.center ? "40px" : "none"};
     padding-bottom: ${(props) => props.center ? "40px" : "none"};
     overflow-x: hidden;
+    transition: background .5s;
 
 `
 
@@ -214,7 +216,6 @@ const Wrap = styled.div`
     align-items: ${(props) => props.center ? "center" : "flex-start"};
     width: 100vw;
     min-height: 100vh;
-    transition: background .5s;
 
     @media only screen and (max-width: 1023px) {
 
