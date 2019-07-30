@@ -27,9 +27,6 @@ const Mobile = styled.div`
         width: 100vw;
         height: 100vh;
         display: block;
-        /* display: flex;
-        justify-content: center;
-        align-items: center; */
         padding-top: 25vw;
         font-family: monospace;
         text-align: center;
@@ -76,61 +73,63 @@ const App = (props) => {
     }
 
     return (
-        <Wrap border={border} center={center}>
+        <BGWrap border={border} center={center}>
+            <Wrap border={border} center={center}>
 
-            <Menu border={border} onMouseEnter={() => setHide(false)} onMouseLeave={() => hideMenu ? setHide(true) : null} hide={hide}>
-                <Option onClick={pasteHandler}><Clipboard size={30} /><OptionText>PASTE</OptionText></Option>
-                <Option onClick={clearHandler}><Clear border={border} /><OptionText>CLEAR</OptionText></Option>
-                <ReactToPrint
-                    trigger={() =>
-                        <Option><PrintIcon size={30} /><OptionText>PRINT</OptionText></Option>
+                <Menu border={border} onMouseEnter={() => setHide(false)} onMouseLeave={() => hideMenu ? setHide(true) : null} hide={hide} center={center}>
+                    <Option onClick={pasteHandler}><Clipboard size={30} /><OptionText>PASTE</OptionText></Option>
+                    <Option onClick={clearHandler}><Clear border={border} /><OptionText>CLEAR</OptionText></Option>
+                    <ReactToPrint
+                        trigger={() =>
+                            <Option><PrintIcon size={30} /><OptionText>PRINT</OptionText></Option>
+                        }
+                        content={() => containerRef.current}
+                    />
+
+                    <PrintOptions>
+
+                        <PrintOption onClick={() => setBorder((b) => !b)}>
+                            <CheckBox type="checkbox" readOnly checked={border} /> BORDER
+                        </PrintOption>
+
+                        <PrintOption onClick={() => setCenter((b) => !b)}>
+                            <CheckBox type="checkbox" readOnly checked={center} /> CENTERED
+                        </PrintOption>
+
+                        <PrintOption onClick={() => setBacklight((b) => !b)}>
+                            <CheckBox type="checkbox" readOnly checked={backlight} /> BACKLIGHT
+                        </PrintOption>
+
+                    </PrintOptions>
+
+                    <PrintOptions>
+
+                        <PrintOption onClick={() => setHideMenu((b) => !b)}>
+                            <CheckBox type="checkbox" readOnly checked={hideMenu} /> FOCUS
+                        </PrintOption>
+
+                        <PrintOption hide>
+                            <CheckBox type="checkbox" readOnly checked={center} /> CENTERED
+                        </PrintOption>
+
+                        <PrintOption style={{ cursor: "pointer" }} onClick={setAbout}>
+                            <CheckBox type="checkbox" readOnly checked={backlight} style={{ opacity: 0, cursor: "pointer" }}/> ???
+                        </PrintOption>
+
+                    </PrintOptions>
+
+                </Menu>
+
+                <Container ref={containerRef} size={containerSize} border={border} center={center}>
+                    {
+                        text.map((word, idx) => {
+                            return <Word key={`${word}__${idx}`} word={word} clear={clear} backlight={backlight} />
+                        })
                     }
-                    content={() => containerRef.current}
-                />
+                </Container>
 
-                <PrintOptions>
-
-                    <PrintOption onClick={() => setBorder((b) => !b)}>
-                        <CheckBox type="checkbox" readOnly checked={border} /> BORDER
-                    </PrintOption>
-
-                    <PrintOption onClick={() => setCenter((b) => !b)}>
-                        <CheckBox type="checkbox" readOnly checked={center} /> CENTERED
-                    </PrintOption>
-
-                    <PrintOption onClick={() => setBacklight((b) => !b)}>
-                        <CheckBox type="checkbox" readOnly checked={backlight} /> BACKLIGHT
-                    </PrintOption>
-
-                </PrintOptions>
-
-                <PrintOptions>
-
-                    <PrintOption onClick={() => setHideMenu((b) => !b)}>
-                        <CheckBox type="checkbox" readOnly checked={hideMenu} /> FOCUS
-                    </PrintOption>
-
-                    <PrintOption hide>
-                        <CheckBox type="checkbox" readOnly checked={center} /> CENTERED
-                    </PrintOption>
-
-                    <PrintOption style={{ cursor: "pointer" }} onClick={setAbout}>
-                        <CheckBox type="checkbox" readOnly checked={backlight} style={{ opacity: 0, cursor: "pointer" }}/> ???
-                    </PrintOption>
-
-                </PrintOptions>
-
-            </Menu>
-
-            <Container ref={containerRef} size={containerSize} border={border} center={center}>
-                {
-                    text.map((word, idx) => {
-                        return <Word key={`${word}__${idx}`} word={word} clear={clear} backlight={backlight} />
-                    })
-                }
-            </Container>
-
-        </Wrap>
+            </Wrap>
+        </BGWrap>
     )
 }
 
@@ -139,7 +138,8 @@ const Menu = styled.div`
     align-items: flex-end;
     position: fixed;
     bottom: 20px;
-    left: 20px;
+    left: ${(props) => props.center ? "20px" : "initial"};
+    right: ${(props) => props.center ? "initial" : "20px"};
     font-family: monospace;
     color: ${(props) => props.border ? "#333" : "#666"};
     svg{
@@ -198,14 +198,22 @@ const CheckBox = styled.input`
     margin-right: 0;
 `
 
-const Wrap = styled.div`
+const BGWrap = styled.div`
 
     background: ${(props) => props.border ? "#CCC" : "white"};
+    padding-top: ${(props) => props.center ? "40px" : "none"};
+    padding-bottom: ${(props) => props.center ? "40px" : "none"};
+    overflow-x: hidden;
+
+`
+
+const Wrap = styled.div`
+
     display: flex;
     justify-content: ${(props) => props.center ? "center" : "flex-start"};
     align-items: ${(props) => props.center ? "center" : "flex-start"};
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     transition: background .5s;
 
     @media only screen and (max-width: 1023px) {
@@ -222,12 +230,14 @@ const Container = styled.div`
     cursor: none;
     border: 1px solid;
     border-color: ${(props) => props.border ? "black" : "transparent"};
+    border-top-color: ${(props) => props.center ? props.border ? "black" : "transparent" : "transparent"};
     width: 30vw;
-    max-height: 75vh;
+    /* max-height: 75vh; */
     padding: 40px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     /* box-sizing: border-box; */
     font-family: monospace;
+    margin-bottom: 80px;
 
     @media only screen and (max-width: 1023px) {
 
@@ -271,7 +281,7 @@ const Word = ({ word, clear = false, backlight }) => {
 
 const WordStyle = styled.div`
 
-    margin: 0px 5px 0px 5px;
+    margin: 0px 10px 0px 0px;
     display: inline-block;
     color: black;
     opacity: ${(props) => props.pinned ? 1 : props.backlight ? 0.20 : 0};
